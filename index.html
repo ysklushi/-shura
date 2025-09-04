@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>最高修羅場</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px; 
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            max-width: 1300px; 
+            width: 95%;
+            text-align: center;
+        }
+
+        .game-title {
+            font-size: 3em;
+            font-weight: bold;
+            color: #ff6b6b;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
+            margin-bottom: 30px;
+            letter-spacing: 3px;
+        }
+        
+        /* --- 新增試煉選擇畫面樣式 --- */
+        .trial-selection-screen {
+            display: none;
+        }
+
+        .trial-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .trial-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .trial-card:not(.disabled):hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+            border-color: #ff6b6b;
+        }
+        
+        .trial-image-placeholder {
+            width: 100%;
+            height: 180px;
+            background: rgba(0,0,0,0.2);
+            border: 2px dashed #aaa;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            color: #aaa;
+        }
+        
+        .trial-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .trial-card h3 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            color: #ffd93d;
+        }
+        /* --- 樣式結束 --- */
+
+
+        .character-selection, .name-input {
+            margin: 30px 0;
+        }
+        
+        .character-slider-container {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .character-viewport {
+            width: calc(350px * 3 + 20px * 2); 
+            overflow: hidden;
+        }
+
+        .character-grid-slider {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .character-grid-slider.shifting {
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .character-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            width: 350px;
+        }
+
+        .character-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .character-card.selected {
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.2);
+        }
+        
+        .character-image-main {
+            width: 310px;
+            height: 403px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin: 0 auto 15px;
+            border: 2px dashed #aaa;
+        }
+
+        .character-card h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #ffd93d;
+        }
+        
+        .slider-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 2em;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .slider-arrow:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .prev-arrow {
+            left: -80px;
+        }
+
+        .next-arrow {
+            right: -80px;
+        }
+
+        .name-input input {
+            padding: 15px;
+            font-size: 1.2em;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+        
+        .name-input h3 {
+            margin-bottom: 15px;
+        }
+
+        .start-button {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 1.3em;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .start-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .start-button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .game-screen {
+            display: none;
+            text-align: left;
+        }
+        
+        .game-layout {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+        }
+        
+        .left-panel {
+            flex: 0 0 400px;
+        }
+
+        .right-panel {
+            flex: 1;
+        }
+
+        .question-area {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            min-height: 400px;
+        }
+
+        .question-text {
+            font-size: 1.5em; 
+            margin-bottom: 25px;
+            line-height: 1.6;
+            color: #fff;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        
+        .option-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .option {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2em;
+            flex: 1;
+            text-align: left;
+        }
+
+        .option:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #ffd93d;
+        }
+        
+        .option.wrong {
+            background: rgba(255, 107, 107, 0.2);
+            border-color: #ff6b6b;
+            opacity: 0.7;
+        }
+
+        .option.correct {
+            background: rgba(78, 205, 196, 0.3);
+            border-color: #4ecdc4;
+            box-shadow: 0 0 15px rgba(78, 205, 196, 0.7);
+        }
+        
+        .answer-icon {
+            font-size: 1.8em;
+            font-weight: bold;
+            width: 30px;
+            flex-shrink: 0;
+            visibility: hidden;
+            text-align: center;
+        }
+
+        .answer-icon.icon-correct {
+            visibility: visible;
+            color: #4ecdc4;
+        }
+        .answer-icon.icon-correct::before {
+            content: '○';
+        }
+
+        .answer-icon.icon-wrong {
+            visibility: visible;
+            color: #ff6b6b;
+        }
+        .answer-icon.icon-wrong::before {
+            content: '×';
+        }
+
+        #explanation-placeholder {
+            min-height: 220px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        
+        .explanation {
+            background: rgba(0, 123, 255, 0.2);
+            border-left: 4px solid #007bff;
+            padding: 20px;
+            border-radius: 5px;
+            display: none;
+            font-size: 1.1em;
+            line-height: 1.7;
+        }
+
+        #next-question-container {
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .dashboard {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 15px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .character-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .player-details {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .character-image {
+            width: 350px;
+            height: 455px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            border: 2px solid #ffd93d;
+            padding: 4px;
+        }
+        
+        .character-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            text-align: center;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+        }
+        
+        .stat-item > div:last-child {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .hp-bar-container {
+            width: 100%;
+            text-align: center;
+        }
+
+        .hp-bar {
+            width: 100%;
+            height: 25px;
+            background: #333;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+            margin-top: 5px;
+        }
+
+        .hp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd93d, #ffb347);
+            transition: all 0.5s ease;
+            border-radius: 5px;
+        }
+
+        .hp-fill.danger {
+            background: linear-gradient(90deg, #ff6b6b, #ee5a24);
+        }
+
+        .timer {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #ff6b6b;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .control-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.4em;
+            transition: all 0.3s ease;
+        }
+
+        .surrender-btn { background: #ff6b6b; color: white; }
+        .escape-btn { background: #666; color: white; }
+
+        .end-screen { display: none; text-align: center; }
+        .end-title { font-size: 2.5em; margin-bottom: 30px; font-weight: bold; }
+        .lose-title { color: #ff6b6b; }
+        .win-title { color: #4ecdc4; }
+        
+        .end-image {
+            width: 622px; 
+            height: 350px; 
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px; 
+            margin: 0 auto 30px; 
+            display: flex;
+            align-items: center; 
+            justify-content: center; 
+            border: 2px solid #ffd93d;
+            padding: 5px;
+        }
+
+        .end-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        
+        .final-stats {
+            background: rgba(255, 255, 255, 0.1); border-radius: 15px;
+            padding: 30px; margin: 30px 0; display: grid;
+            grid-template-columns: repeat(2, 1fr); gap: 20px;font-size: 1.4em;
+        }
+
+        .special-event {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95); border: 3px solid #ffd93d;
+            border-radius: 20px; padding: 50px; text-align: center;
+            z-index: 1000; max-width: 750px; width: 90%; display: none;
+        }
+        .special-event h2 { color: #ffd93d; font-size: 2em; margin-bottom: 20px; }
+        
+        #special-question {
+            font-size: 1.5em;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .special-options { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 30px; 
+        }
+        
+        .special-option {
+            background: rgba(255, 215, 61, 0.2); border: 2px solid #ffd93d;
+            border-radius: 10px; padding: 15px; cursor: pointer; transition: all 0.3s ease;
+            font-size: 1.2em;
+        }
+        .special-option:hover { background: rgba(255, 215, 61, 0.4); }
+
+        #special-event-result {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            font-size: 1.5em;
+            line-height: 1.7;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #special-event-controls {
+            text-align: center;
+        }
+
+
+        @media (max-width: 1450px) {
+             .prev-arrow { left: 10px; }
+             .next-arrow { right: 10px; }
+        }
+
+        @media (max-width: 1200px) {
+            .game-layout {
+                flex-direction: column;
+            }
+            .left-panel {
+                width: 100%;
+                flex-basis: auto;
+            }
+            .stats {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .trial-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .character-grid { grid-template-columns: 1fr; }
+            .stats { grid-template-columns: repeat(2, 1fr); }
+            .end-image {
+                width: 90%;
+                height: auto;
+            }
+            .special-options {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .trial-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 主選單畫面 -->
+        <div id="main-menu">
+            <h1 class="game-title">最高修羅場</h1>
+            
+            <div class="character-selection">
+                <h2>選擇你的角色</h2>
+                <div class="character-slider-container">
+                    <button class="slider-arrow prev-arrow">&lt;</button>
+                    <div class="character-viewport">
+                        <div class="character-grid-slider">
+                            <div class="character-card" data-character="男律師" data-image="role1.png">
+                                <img src="role1.png" alt="律師圖片" class="character-image-main">
+                                <h3>律師</h3>
+                                <p>以法律武器征戰修羅場</p>
+                            </div>
+                            <div class="character-card" data-character="男法官" data-image="role2.png">
+                                <img src="role2.png" alt="法官圖片" class="character-image-main">
+                                <h3>法官</h3>
+                                <p>以公正之劍斬斷迷霧</p>
+                            </div>
+                            <div class="character-card" data-character="男檢察官" data-image="role3.png">
+                                <img src="role3.png" alt="檢察官圖片" class="character-image-main">
+                                <h3>檢察官</h3>
+                                <p>以正義之盾守護真理</p>
+                            </div>
+                            <div class="character-card" data-character="女律師" data-image="role4.png">
+                                <img src="role4.png" alt="女律師圖片" class="character-image-main">
+                                <h3>律師</h3>
+                                <p>以智慧之光照亮案件</p>
+                            </div>
+                            <div class="character-card" data-character="女法官" data-image="role5.png">
+                                <img src="role5.png" alt="女法官圖片" class="character-image-main">
+                                <h3>法官</h3>
+                                <p>以堅定之心衡量是非</p>
+                            </div>
+                            <div class="character-card" data-character="女檢察官" data-image="role6.png">
+                                <img src="role6.png" alt="女檢察官圖片" class="character-image-main">
+                                <h3>檢察官</h3>
+                                <p>以不屈之炎追討罪惡</p>
+                            </div>
+                            <div class="character-card" data-character="司法黃牛" data-image="role7.png">
+                                <img src="role7.png" alt="司法黃牛" class="character-image-main">
+                                <h3>司法黃牛</h3>
+                                <p>以後門關說迷惑人心</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="slider-arrow next-arrow">&gt;</button>
+                </div>
+            </div>
+
+            <div class="name-input">
+                <h3>為你的角色命名</h3>
+                <input type="text" id="character-name" placeholder="輸入角色名稱" maxlength="10">
+            </div>
+
+            <button class="start-button" id="start-game" disabled>地獄試煉開始</button>
+        </div>
+
+        <!-- 試煉選擇畫面 -->
+        <div id="trial-selection-screen" class="trial-selection-screen">
+            <h2 class="game-title" style="font-size: 2.5em; margin-bottom: 40px;">選擇你的試煉戰場</h2>
+            <div class="trial-grid">
+                <div class="trial-card" data-trial="criminal">
+                    <div class="trial-image-placeholder">（刑事試煉插圖）</div>
+                    <h3>刑事試煉</h3>
+                    <p>面對最險惡的罪犯與最複雜的人性，用你的知識與判斷力，在刑事案件的修羅場中殺出一條血路。</p>
+                </div>
+                <div class="trial-card" data-trial="civil">
+                     <div class="trial-image-placeholder">（民事試煉插圖）</div>
+                    <h3>民事試煉</h3>
+                    <p>金錢、契約、家庭...，民事糾紛的戰場沒有煙硝，卻充滿無形的刀光劍影。用你的智慧理清一切。</p>
+                </div>
+                <div class="trial-card disabled">
+                     <div class="trial-image-placeholder">（插圖）</div>
+                    <h3>尚待建構</h3>
+                    <p>此試煉場域仍在混沌之中，等待開闢。</p>
+                </div>
+                <div class="trial-card disabled">
+                     <div class="trial-image-placeholder">（插圖）</div>
+                    <h3>尚待建構</h3>
+                    <p>此試煉場域仍在混沌之中，等待開闢。</p>
+                </div>
+                <div class="trial-card disabled">
+                     <div class="trial-image-placeholder">（插圖）</div>
+                    <h3>尚待建構</h3>
+                    <p>此試煉場域仍在混沌之中，等待開闢。</p>
+                </div>
+                <div class="trial-card disabled">
+                     <div class="trial-image-placeholder">（插圖）</div>
+                    <h3>尚待建構</h3>
+                    <p>此試煉場域仍在混沌之中，等待開闢。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 遊戲畫面 -->
+        <div id="game-screen" class="game-screen">
+            <div class="game-layout">
+                <div class="left-panel">
+                    <div class="dashboard">
+                        <div class="character-info">
+                            <div class="character-image" id="character-image"></div>
+                            <div class="player-details">
+                                <div><strong>角色：</strong><span id="player-character"></span></div>
+                                <div><strong>名稱：</strong><span id="player-name"></span></div>
+                            </div>
+                            <div class="hp-bar-container">
+                                <div><strong>生命值：</strong><span id="hp-value">300</span>/1000</div>
+                                <div class="hp-bar">
+                                    <div class="hp-fill" id="hp-fill" style="width: 30%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stats">
+                            <div class="stat-item">
+                                <div><strong>當日日期</strong></div>
+                                <div id="current-date"></div>
+                            </div>
+                            <div class="stat-item">
+                                <div><strong>遊戲時間</strong></div>
+                                <div id="game-time">00:00</div>
+                            </div>
+                            <div class="stat-item">
+                                <div><strong>倒數計時</strong></div>
+                                <div class="timer" id="timer">40</div>
+                            </div>
+                            <div class="stat-item">
+                                <div><strong>答對題數</strong></div>
+                                <div id="correct-count">0</div>
+                            </div>
+                            <div class="stat-item">
+                                <div><strong>答錯題數</strong></div>
+                                <div id="wrong-count">0</div>
+                            </div>
+                            <div class="stat-item">
+                                <div><strong>累積題數</strong></div>
+                                <div id="total-count">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-panel">
+                    <div class="question-area">
+                        <div class="question-text" id="question-text"></div>
+                        <div class="options" id="options"></div>
+                    </div>
+                    <div id="explanation-placeholder">
+                        <div class="explanation" id="explanation"></div>
+                        <div id="next-question-container">
+                            <button id="next-question-btn" class="control-button" style="background: #4ecdc4; color: white;">進入下一題</button>
+                            <button id="defeat-btn" class="control-button" style="background: #ff6b6b; color: white; display: none;">你已落敗</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="control-buttons">
+                <button class="control-button surrender-btn" onclick="gameOver(false)">投降認輸</button>
+                <button class="control-button escape-btn" onclick="gameOver(false)">中途烙跑</button>
+            </div>
+        </div>
+
+        <!-- 特殊事件畫面 -->
+        <div id="special-event" class="special-event">
+            <h2>命運的轉折</h2>
+            <div id="special-question"></div>
+            <div class="special-options" id="special-options"></div>
+            <div id="special-event-result"></div>
+            <div id="special-event-controls" style="display: none;">
+                <button id="special-event-continue-btn" class="control-button" style="background: #4ecdc4; color: white; margin-top: 20px;">繼續挑戰</button>
+            </div>
+        </div>
+
+        <!-- 結束畫面 -->
+        <div id="end-screen" class="end-screen">
+            <h1 class="end-title" id="end-title"></h1>
+            <div class="end-image" id="end-image"></div>
+            <div class="final-stats">
+                <div><strong>角色：</strong><span id="final-character"></span></div>
+                <div><strong>名稱：</strong><span id="final-name"></span></div>
+                <div><strong>當日日期：</strong><span id="final-date"></span></div>
+                <div><strong>遊戲時間：</strong><span id="final-time"></span></div>
+                <div><strong>答對題數：</strong><span id="final-correct"></span></div>
+                <div><strong>答錯題數：</strong><span id="final-wrong"></span></div>
+                <div><strong>正確率：</strong><span id="final-accuracy"></span></div>
+                <div><strong>累積題數：</strong><span id="final-total"></span></div>
+            </div>
+            <div class="control-buttons">
+                <button class="control-button" style="background: #4ecdc4; color: white;" onclick="restartGame()">重新投胎</button>
+                <button class="control-button" style="background: #ffd93d; color: black;" onclick="saveRecord()">桌機另存挑戰紀錄</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 載入所有題目 JS 檔案 -->
+    <script src="question0001.js"></script>
+    <script src="question0002.js"></script>
+    <script src="question0003.js"></script>
+    <script src="question0004.js"></script>
+    <script src="question0005.js"></script>
+    <script src="question0006.js"></script>
+    <script src="question0007.js"></script>
+    <script src="question0008.js"></script>
+    <script src="question0009.js"></script>
+    <script src="question0010.js"></script>
+    
+    <!-- 載入所有特殊事件 JS 檔案 -->
+    <script src="fate001.js"></script>
+    <script src="fate002.js"></script>
+    <script src="fate003.js"></script>
+
+    <script>
+        // 遊戲狀態
+        let gameState = {
+            character: '',
+            name: '',
+            image: '',
+            trialType: '', // 新增：儲存試煉類型
+            hp: 300,
+            maxHp: 1000,
+            currentQuestion: 0,
+            correctCount: 0,
+            wrongCount: 0,
+            totalCount: 0,
+            startTime: null,
+            timer: null,
+            countdown: 40,
+            questions: [],
+            specialEvents: [], 
+            usedSpecialEvents: []
+        };
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // 修改：根據選擇的試煉類型載入對應的題目
+        function initializeQuestions(trialType) {
+            gameState.questions = []; // 每次都先清空
+            if (trialType === 'criminal') {
+                console.log("Loading criminal trial questions...");
+                if (typeof questions0001 !== 'undefined') gameState.questions.push(...questions0001);
+                if (typeof questions0002 !== 'undefined') gameState.questions.push(...questions0002);
+                if (typeof questions0003 !== 'undefined') gameState.questions.push(...questions0003);
+                if (typeof questions0004 !== 'undefined') gameState.questions.push(...questions0004);
+                if (typeof questions0005 !== 'undefined') gameState.questions.push(...questions0005);
+            } else if (trialType === 'civil') {
+                console.log("Loading civil trial questions...");
+                if (typeof questions0006 !== 'undefined') gameState.questions.push(...questions0006);
+                if (typeof questions0007 !== 'undefined') gameState.questions.push(...questions0007);
+                if (typeof questions0008 !== 'undefined') gameState.questions.push(...questions0008);
+                if (typeof questions0009 !== 'undefined') gameState.questions.push(...questions0009);
+                if (typeof questions0010 !== 'undefined') gameState.questions.push(...questions0010);
+            }
+            
+            shuffleArray(gameState.questions);
+            console.log(`Loaded ${gameState.questions.length} questions for ${trialType} trial.`);
+        }
+        
+        function initializeSpecialEvents() {
+            if (gameState.specialEvents.length > 0) return; // 避免重複載入
+            if (typeof fateEvents001 !== 'undefined') gameState.specialEvents.push(...fateEvents001);
+            if (typeof fateEvents002 !== 'undefined') gameState.specialEvents.push(...fateEvents002);
+            if (typeof fateEvents003 !== 'undefined') gameState.specialEvents.push(...fateEvents003);
+            shuffleArray(gameState.specialEvents);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // 移除：不再預先載入所有題目
+            // initializeQuestions();
+            initializeSpecialEvents(); 
+            
+            const allCharacterCards = document.querySelectorAll('.character-card');
+            
+            allCharacterCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // 重新綁定事件，避免因 cloneNode 造成事件遺失
+                    document.querySelectorAll('.character-card').forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                    gameState.character = this.dataset.character;
+                    gameState.image = this.dataset.image;
+                    updateStartButton();
+                });
+            });
+
+            document.getElementById('character-name').addEventListener('input', function() {
+                gameState.name = this.value.trim();
+                updateStartButton();
+            });
+
+            document.getElementById('start-game').addEventListener('click', showTrialSelection); // 修改：點擊後顯示試煉選擇
+            document.getElementById('current-date').textContent = new Date().toLocaleDateString('zh-TW');
+
+            document.getElementById('next-question-btn').addEventListener('click', () => {
+                gameState.currentQuestion++;
+                showQuestion();
+            });
+            
+            document.getElementById('defeat-btn').addEventListener('click', () => gameOver(false));
+            
+            document.getElementById('special-event-continue-btn').addEventListener('click', () => {
+                document.getElementById('special-event').style.display = 'none';
+                updateHP();
+
+                if (gameState.hp <= 0) {
+                    gameOver(false);
+                } else {
+                    renderCurrentQuestion();
+                }
+            });
+
+            // 新增：為試煉卡片加上事件監聽
+            document.querySelectorAll('.trial-card:not(.disabled)').forEach(card => {
+                card.addEventListener('click', function() {
+                    const trialType = this.dataset.trial;
+                    startTrial(trialType);
+                });
+            });
+
+
+            const slider = document.querySelector('.character-grid-slider');
+            const prevArrow = document.querySelector('.prev-arrow');
+            const nextArrow = document.querySelector('.next-arrow');
+            let cards = slider.querySelectorAll('.character-card');
+            
+            const cardWidth = cards[0].offsetWidth;
+            const gap = 20;
+            const slideWidth = cardWidth + gap;
+            
+            const cardsToClone = 3;
+            for (let i = 0; i < cardsToClone; i++) {
+                const cloneFirst = cards[i].cloneNode(true);
+                const cloneLast = cards[cards.length - 1 - i].cloneNode(true);
+                slider.appendChild(cloneFirst);
+                slider.insertBefore(cloneLast, cards[0]);
+            }
+
+            // 重新選取所有卡片並重新綁定事件
+            cards = slider.querySelectorAll('.character-card');
+            cards.forEach(card => {
+                 card.addEventListener('click', function() {
+                    cards.forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                    gameState.character = this.dataset.character;
+                    gameState.image = this.dataset.image;
+                    updateStartButton();
+                });
+            });
+
+
+            let currentIndex = cardsToClone;
+            let isTransitioning = false;
+            
+            slider.style.transform = `translateX(${-slideWidth * currentIndex}px)`;
+
+            function shiftSlide(direction) {
+                if (isTransitioning) return;
+                isTransitioning = true;
+                slider.classList.add('shifting');
+
+                currentIndex += direction;
+                slider.style.transform = `translateX(${-slideWidth * currentIndex}px)`;
+            }
+
+            slider.addEventListener('transitionend', () => {
+                isTransitioning = false;
+                slider.classList.remove('shifting');
+
+                const originalCardCount = cards.length - 2 * cardsToClone;
+                if (currentIndex === cardsToClone - 1) { 
+                    currentIndex = originalCardCount + cardsToClone - 1;
+                    slider.style.transform = `translateX(${-slideWidth * currentIndex}px)`;
+                } else if (currentIndex === originalCardCount + cardsToClone) {
+                    currentIndex = cardsToClone;
+                    slider.style.transform = `translateX(${-slideWidth * currentIndex}px)`;
+                }
+            });
+
+            nextArrow.addEventListener('click', () => shiftSlide(1));
+            prevArrow.addEventListener('click', () => shiftSlide(-1));
+        });
+
+        function updateStartButton() {
+            const startButton = document.getElementById('start-game');
+            if (gameState.character && gameState.name) {
+                startButton.disabled = false;
+            } else {
+                startButton.disabled = true;
+            }
+        }
+        
+        // 新增：顯示試煉選擇畫面
+        function showTrialSelection() {
+            document.getElementById('main-menu').style.display = 'none';
+            document.getElementById('trial-selection-screen').style.display = 'block';
+        }
+
+        // 修改：此函數現在是真正開始遊戲的核心
+        function startTrial(trialType) {
+            gameState.trialType = trialType;
+            initializeQuestions(trialType); // 根據選擇載入題目
+
+            document.getElementById('player-character').textContent = gameState.character;
+            document.getElementById('player-name').textContent = gameState.name;
+            
+            const characterImageDiv = document.getElementById('character-image');
+            characterImageDiv.innerHTML = ''; 
+            
+            const img = document.createElement('img');
+            img.src = gameState.image; 
+            img.alt = gameState.character;
+            characterImageDiv.appendChild(img);
+
+            // 重置遊戲狀態
+            gameState.startTime = new Date();
+            gameState.currentQuestion = 0;
+            gameState.hp = 300;
+            gameState.correctCount = 0;
+            gameState.wrongCount = 0;
+            gameState.totalCount = 0;
+            gameState.usedSpecialEvents = [];
+            
+            updateHP(); 
+
+            document.getElementById('trial-selection-screen').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'block';
+
+            updateGameTime();
+            setInterval(updateGameTime, 1000);
+
+            showQuestion();
+        }
+        
+        function renderCurrentQuestion() {
+            const question = gameState.questions[gameState.currentQuestion];
+            document.getElementById('question-text').textContent = `Q${gameState.totalCount + 1}: ${question.question}`;
+            
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'option-wrapper';
+
+                const iconSpan = document.createElement('span');
+                iconSpan.className = 'answer-icon';
+                
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                optionElement.textContent = `${String.fromCharCode(65 + index)}. ${option}`;
+                
+                optionElement.addEventListener('click', () => selectOption(index));
+
+                wrapper.appendChild(iconSpan);
+                wrapper.appendChild(optionElement);
+                optionsContainer.appendChild(wrapper);
+            });
+
+            document.getElementById('explanation').style.display = 'none';
+            document.getElementById('next-question-container').style.display = 'none';
+            
+            clearInterval(gameState.timer);
+            gameState.countdown = 40;
+            updateTimer();
+            gameState.timer = setInterval(() => {
+                gameState.countdown--;
+                updateTimer();
+                if (gameState.countdown <= 0) {
+                    timeUp();
+                }
+            }, 1000);
+        }
+        
+        function showQuestion() {
+            if (gameState.currentQuestion >= gameState.questions.length) {
+                if (gameState.questions.length > 0) {
+                    gameOver(true);
+                } else {
+                    alert("錯誤：找不到任何題目！請確認 questionXXXX.js 檔案是否正確載入。");
+                    restartGame();
+                }
+                return;
+            }
+
+            if (gameState.totalCount > 0 && gameState.totalCount % 5 === 0 && gameState.usedSpecialEvents.length < gameState.specialEvents.length) {
+                showSpecialEvent();
+            } else {
+                renderCurrentQuestion();
+            }
+        }
+        
+        function showSpecialEvent() {
+            clearInterval(gameState.timer);
+            document.getElementById('timer').textContent = '喘口氣吧！';
+
+            const availableEvents = gameState.specialEvents.filter((_, index) => !gameState.usedSpecialEvents.includes(index));
+            if(availableEvents.length === 0) {
+                renderCurrentQuestion();
+                return;
+            }
+            const eventIndex = Math.floor(Math.random() * availableEvents.length);
+            const event = availableEvents[eventIndex];
+            const originalIndex = gameState.specialEvents.indexOf(event);
+            
+            gameState.usedSpecialEvents.push(originalIndex);
+
+            document.getElementById('special-question').textContent = event.question;
+            
+            const optionsContainer = document.getElementById('special-options');
+            optionsContainer.innerHTML = '';
+            
+            document.getElementById('special-event-result').innerHTML = '';
+            document.getElementById('special-event-controls').style.display = 'none';
+
+            event.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'special-option';
+                optionElement.textContent = option;
+                
+                const newOptionElement = optionElement.cloneNode(true);
+                newOptionElement.textContent = option;
+                newOptionElement.addEventListener('click', () => handleSpecialEvent(event, index), { once: true });
+                optionsContainer.appendChild(newOptionElement);
+            });
+
+            document.getElementById('special-event').style.display = 'block';
+        }
+
+        function handleSpecialEvent(event, selectedIndex) {
+            const options = document.querySelectorAll('.special-option');
+            const resultContainer = document.getElementById('special-event-result');
+            const controlsContainer = document.getElementById('special-event-controls');
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                opt.style.opacity = '0.6';
+            });
+            options[selectedIndex].style.opacity = '1';
+            options[selectedIndex].style.borderColor = '#4ecdc4';
+
+
+            const isCorrect = selectedIndex === event.correct;
+            let resultText = '';
+            
+            if (isCorrect) {
+                gameState.hp = Math.min(gameState.hp + event.reward, gameState.maxHp);
+                resultText = `${event.correctMsg}<br><strong style="color: #4ecdc4;">(HP +${event.reward})</strong>`;
+            } else {
+                gameState.hp = Math.max(gameState.hp - event.penalty, 0);
+                resultText = `${event.wrongMsg}<br><strong style="color: #ff6b6b;">(HP -${event.penalty})</strong>`;
+            }
+
+            resultContainer.innerHTML = resultText;
+            controlsContainer.style.display = 'block';
+        }
+        
+        function handleAnswer(isCorrect, explanationText, selectedIndex) {
+            clearInterval(gameState.timer);
+            
+            const question = gameState.questions[gameState.currentQuestion];
+            const correctIndex = question.correct;
+            const wrappers = document.querySelectorAll('.option-wrapper');
+
+            wrappers.forEach((wrapper, index) => {
+                const option = wrapper.querySelector('.option');
+                const icon = wrapper.querySelector('.answer-icon');
+                
+                option.style.pointerEvents = 'none';
+                
+                if (index === correctIndex) {
+                    option.classList.add('correct');
+                    icon.classList.add('icon-correct');
+                } else {
+                    icon.classList.add('icon-wrong');
+                }
+            });
+            
+            if (!isCorrect && selectedIndex !== null) {
+                wrappers[selectedIndex].querySelector('.option').classList.add('wrong');
+            }
+
+            if (isCorrect) {
+                gameState.correctCount++;
+            } else {
+                gameState.wrongCount++;
+                gameState.hp = Math.max(gameState.hp - 100, 0);
+                updateHP();
+            }
+            
+            gameState.totalCount++;
+            updateStats();
+            
+            document.getElementById('explanation').innerHTML = `<b>解說：</b><br>${explanationText}`;
+            document.getElementById('explanation').style.display = 'block';
+            
+            const nextBtnContainer = document.getElementById('next-question-container');
+            const nextBtn = document.getElementById('next-question-btn');
+            const defeatBtn = document.getElementById('defeat-btn');
+
+            nextBtnContainer.style.display = 'block';
+
+            if (gameState.hp <= 0) {
+                nextBtn.style.display = 'none';
+                defeatBtn.style.display = 'inline-block';
+            } else {
+                nextBtn.style.display = 'inline-block';
+                defeatBtn.style.display = 'none';
+            }
+        }
+
+        function selectOption(optionIndex) {
+            const question = gameState.questions[gameState.currentQuestion];
+            const isCorrect = optionIndex === question.correct;
+            handleAnswer(isCorrect, question.explanation, optionIndex);
+        }
+
+        function timeUp() {
+            const question = gameState.questions[gameState.currentQuestion];
+            const explanation = `時間到！<br><br>${question.explanation}`;
+            handleAnswer(false, explanation, null);
+        }
+
+        function updateTimer() {
+            document.getElementById('timer').textContent = gameState.countdown;
+        }
+
+        function updateGameTime() {
+            if (gameState.startTime) {
+                const elapsed = Math.floor((new Date() - gameState.startTime) / 1000);
+                const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+                const seconds = (elapsed % 60).toString().padStart(2, '0');
+                document.getElementById('game-time').textContent = `${minutes}:${seconds}`;
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('correct-count').textContent = gameState.correctCount;
+            document.getElementById('wrong-count').textContent = gameState.wrongCount;
+            document.getElementById('total-count').textContent = gameState.totalCount;
+        }
+
+        function updateHP() {
+            document.getElementById('hp-value').textContent = gameState.hp;
+            const hpPercentage = (gameState.hp / gameState.maxHp) * 100;
+            const hpFill = document.getElementById('hp-fill');
+            hpFill.style.width = `${hpPercentage}%`;
+            
+            if (gameState.hp <= 200) {
+                hpFill.classList.add('danger');
+            } else {
+                hpFill.classList.remove('danger');
+            }
+        }
+
+        function gameOver(isWin) {
+            clearInterval(gameState.timer);
+            
+            document.getElementById('game-screen').style.display = 'none';
+            document.getElementById('end-screen').style.display = 'block';
+            
+            const endTitle = document.getElementById('end-title');
+            const endImage = document.getElementById('end-image');
+            
+            if (isWin) {
+                endTitle.textContent = '你已成為最高修羅場之王';
+                endTitle.className = 'end-title win-title';
+                endImage.innerHTML = '<img src="win.png" alt="通關插圖" />';
+            } else {
+                endTitle.textContent = '你已成為修羅場中的一堆白骨';
+                endTitle.className = 'end-title lose-title';
+                
+                // 根據角色顯示不同的失敗圖片
+                let loseImageSrc = 'lose.png'; // 預設失敗圖片
+                if (gameState.image === 'role7.png') {
+                    loseImageSrc = 'lose2.png'; // 司法黃牛的專屬失敗圖片
+                }
+                endImage.innerHTML = `<img src="${loseImageSrc}" alt="落敗插圖" />`;
+            }
+            
+            document.getElementById('final-character').textContent = gameState.character;
+            document.getElementById('final-name').textContent = gameState.name;
+            document.getElementById('final-date').textContent = new Date().toLocaleDateString('zh-TW');
+            document.getElementById('final-time').textContent = document.getElementById('game-time').textContent;
+            document.getElementById('final-correct').textContent = gameState.correctCount;
+            document.getElementById('final-wrong').textContent = gameState.wrongCount;
+            document.getElementById('final-total').textContent = gameState.totalCount;
+            
+            const accuracy = gameState.totalCount > 0 ? Math.round((gameState.correctCount / gameState.totalCount) * 100) : 0;
+            document.getElementById('final-accuracy').textContent = accuracy + '%';
+        }
+
+        function restartGame() {
+            window.location.reload();
+        }
+
+        function saveRecord() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 800;
+            canvas.height = 600;
+            
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, '#1e3c72');
+            gradient.addColorStop(1, '#2a5298');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 24px "Microsoft JhengHei"';
+            ctx.textAlign = 'center';
+            
+            const isWin = document.getElementById('end-title').classList.contains('win-title');
+            ctx.fillStyle = isWin ? '#4ecdc4' : '#ff6b6b';
+            ctx.font = 'bold 36px "Microsoft JhengHei"';
+            ctx.fillText(document.getElementById('end-title').textContent, canvas.width / 2, 80);
+            
+            ctx.fillStyle = '#ffd93d';
+            ctx.font = 'bold 28px "Microsoft JhengHei"';
+            ctx.fillText('最高修羅場 - 挑戰紀錄', canvas.width / 2, 140);
+            
+            ctx.fillStyle = 'white';
+            ctx.font = '22px "Microsoft JhengHei"';
+            ctx.textAlign = 'left';
+            
+            const stats = [
+                `角色： ${gameState.character}`,
+                `名稱： ${gameState.name}`,
+                `日期： ${new Date().toLocaleDateString('zh-TW')}`,
+                `遊戲時間： ${document.getElementById('game-time').textContent}`,
+                `答對題數： ${gameState.correctCount}`,
+                `答錯題數： ${gameState.wrongCount}`,
+                `累積題數： ${gameState.totalCount}`,
+                `正確率： ${gameState.totalCount > 0 ? Math.round((gameState.correctCount / gameState.totalCount) * 100) : 0}%`
+            ];
+            
+            let y = 220;
+            stats.forEach((stat, index) => {
+                if (index === 4) {
+                    y = 220;
+                }
+                ctx.fillText(stat, index < 4 ? 100 : 450, y);
+                if(index < 4 || index > 4) y += 50;
+            });
+            
+            const link = document.createElement('a');
+            link.download = `修羅場挑戰紀錄_${gameState.name}_${new Date().toISOString().slice(0, 10)}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+    </script>
+</body>
+</html>
