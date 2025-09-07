@@ -82,6 +82,16 @@
             color: #aaa;
         }
         
+        /* --- 【修改點 1】新增的圖片樣式 --- */
+        .trial-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
         .trial-card.disabled {
             opacity: 0.5;
             cursor: not-allowed;
@@ -641,8 +651,9 @@
         <div id="trial-selection-screen" class="trial-selection-screen">
             <h2 class="game-title" style="font-size: 2.5em; margin-bottom: 40px;">選擇你的試煉戰場</h2>
             <div class="trial-grid">
+                <!-- --- 【修改點 2】將原本的 div 替換成 img --- -->
                 <div class="trial-card" data-trial="criminal">
-                    <div class="trial-image-placeholder">（刑事試煉插圖）</div>
+                    <img src="criminallaw.png" alt="刑事試煉插圖" class="trial-image">
                     <h3>刑事試煉</h3>
                     <p>面對最險惡的罪犯與最複雜的人性，用你的知識與判斷力，在刑事案件的修羅場中殺出一條血路。</p>
                 </div>
