@@ -478,7 +478,7 @@
         
         .end-image {
             width: 622px; 
-            height: 350px; 
+            height: 800px; 
             background: rgba(255, 255, 255, 0.2);
             border-radius: 15px; 
             margin: 0 auto 30px; 
@@ -492,7 +492,8 @@
         .end-image img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            /* --- CSS 修改點：改為 contain 以完整顯示圖片 --- */
+            object-fit: contain; 
             border-radius: 10px;
         }
         
@@ -745,6 +746,7 @@
                     </div>
                 </div>
             </div>
+            <!-- --- HTML 修改點：新增按鈕 --- -->
             <div class="control-buttons">
                 <button class="control-button surrender-btn" onclick="gameOver(false)">投降認輸</button>
                 <button class="control-button escape-btn" onclick="gameOver(false)">中途烙跑</button>
@@ -1246,7 +1248,14 @@
             }
         }
 
-        function gameOver(isWin) {
+        // --- JavaScript 新增點 1：新增預覽通關畫面的函數 ---
+        function previewVictory() {
+            // 呼叫 gameOver 函數，設定為勝利，並傳入指定的通關圖片
+            gameOver(true, 'passall.jpeg');
+        }
+
+        // --- JavaScript 修改點：修改 gameOver 函數以接受自訂圖片 ---
+        function gameOver(isWin, customImage = null) {
             clearInterval(gameState.timer);
             
             document.getElementById('game-screen').style.display = 'none';
@@ -1258,12 +1267,12 @@
             if (isWin) {
                 endTitle.textContent = '你已成為最高修羅場之王';
                 endTitle.className = 'end-title win-title';
-                endImage.innerHTML = '<img src="win.png" alt="通關插圖" />';
+                const winImageSrc = customImage || 'win.png'; // 如果有傳入自訂圖片則使用，否則用預設的
+                endImage.innerHTML = `<img src="${winImageSrc}" alt="通關插圖" />`;
             } else {
                 endTitle.textContent = '你已成為修羅場中的一堆白骨';
                 endTitle.className = 'end-title lose-title';
                 
-                // 根據角色顯示不同的失敗圖片
                 let loseImageSrc = 'lose.png'; // 預設失敗圖片
                 if (gameState.image === 'role7.png') {
                     loseImageSrc = 'lose2.png'; // 司法黃牛的專屬失敗圖片
