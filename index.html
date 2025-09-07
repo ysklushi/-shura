@@ -1010,7 +1010,22 @@
             // 重置遊戲狀態
             gameState.startTime = new Date();
             gameState.currentQuestion = 0;
-            gameState.hp = 300;
+
+            // --- 【程式修改處】根據角色設定不同的初始 HP ---
+            let initialHp = 300; // 預設值
+            const characterRole = gameState.character;
+            if (characterRole.includes('律師')) {
+                initialHp = 300;
+            } else if (characterRole.includes('法官')) {
+                initialHp = 100;
+            } else if (characterRole.includes('檢察官')) {
+                initialHp = 150;
+            } else if (characterRole.includes('司法黃牛')) {
+                initialHp = 900;
+            }
+            gameState.hp = initialHp;
+            // --- 修改結束 ---
+            
             gameState.correctCount = 0;
             gameState.wrongCount = 0;
             gameState.totalCount = 0;
