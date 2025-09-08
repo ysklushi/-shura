@@ -548,6 +548,23 @@
             text-align: center;
         }
 
+        /* --- 【CSS 新增處】 --- */
+        .creator-credit {
+            position: fixed;
+            bottom: 10px;
+            right: 15px;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            z-index: 9999;
+            transition: color 0.3s ease;
+        }
+
+        .creator-credit:hover {
+            color: rgba(255, 255, 255, 0.9);
+        }
+        /* --- CSS 新增結束 --- */
+
 
         @media (max-width: 1450px) {
              .prev-arrow { left: 10px; }
@@ -784,6 +801,10 @@
             </div>
         </div>
     </div>
+
+    <!-- --- 【HTML 新增處】 --- -->
+    <a href="https://karolushi.netlify.app/" target="_blank" class="creator-credit">過勞律師製作</a>
+    <!-- --- HTML 新增結束 --- -->
 
     <!-- 載入所有題目 JS 檔案 -->
     <script src="question0001.js"></script>
