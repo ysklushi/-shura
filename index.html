@@ -676,7 +676,7 @@
                     <p>面對最險惡的罪犯與最複雜的人性，用你的知識與判斷力，在刑事案件的修羅場中殺出一條血路。</p>
                 </div>
                 <div class="trial-card" data-trial="civil">
-                     <div class="trial-image-placeholder">（民事試煉插圖）</div>
+                     <img src="civilcode.png" alt="民事試煉插圖" class="trial-image">
                     <h3>民事試煉</h3>
                     <p>金錢、契約、家庭...，民事糾紛的戰場沒有煙硝，卻充滿無形的刀光劍影。用你的智慧理清一切。</p>
                 </div>
@@ -807,6 +807,8 @@
     <!-- --- HTML 新增結束 --- -->
 
     <!-- 載入所有題目 JS 檔案 -->
+    <!-- ▼▼▼ HTML 修改處 1：載入所有需要的 JS 檔案 ▼▼▼ -->
+    <!-- 刑事試煉題庫 -->
     <script src="question0001.js"></script>
     <script src="question0002.js"></script>
     <script src="question0003.js"></script>
@@ -817,6 +819,17 @@
     <script src="question0008.js"></script>
     <script src="question0009.js"></script>
     <script src="question0010.js"></script>
+    <!-- 民事試煉題庫 -->
+    <script src="question0101.js"></script>
+    <script src="question0102.js"></script>
+    <script src="question0103.js"></script>
+    <script src="question0104.js"></script>
+    <script src="question0105.js"></script>
+    <script src="question0106.js"></script>
+    <script src="question0107.js"></script>
+    <script src="question0108.js"></script>
+    <script src="question0109.js"></script>
+    <script src="question0110.js"></script>
     
     <!-- 載入所有特殊事件 JS 檔案 -->
     <script src="fate001.js"></script>
@@ -851,28 +864,43 @@
             }
         }
 
-        // 修改：根據選擇的試煉類型載入對應的題目
+        // ▼▼▼ JavaScript 修改處 2：修改函式內的題目分配邏輯 ▼▼▼
         function initializeQuestions(trialType) {
             gameState.questions = []; // 每次都先清空
+            
             if (trialType === 'criminal') {
                 console.log("Loading criminal trial questions...");
+                // 載入刑事試煉題庫 (0001-0010)
                 if (typeof questions0001 !== 'undefined') gameState.questions.push(...questions0001);
                 if (typeof questions0002 !== 'undefined') gameState.questions.push(...questions0002);
                 if (typeof questions0003 !== 'undefined') gameState.questions.push(...questions0003);
                 if (typeof questions0004 !== 'undefined') gameState.questions.push(...questions0004);
                 if (typeof questions0005 !== 'undefined') gameState.questions.push(...questions0005);
-            } else if (trialType === 'civil') {
-                console.log("Loading civil trial questions...");
                 if (typeof questions0006 !== 'undefined') gameState.questions.push(...questions0006);
                 if (typeof questions0007 !== 'undefined') gameState.questions.push(...questions0007);
                 if (typeof questions0008 !== 'undefined') gameState.questions.push(...questions0008);
                 if (typeof questions0009 !== 'undefined') gameState.questions.push(...questions0009);
                 if (typeof questions0010 !== 'undefined') gameState.questions.push(...questions0010);
+
+            } else if (trialType === 'civil') {
+                console.log("Loading civil trial questions...");
+                // 載入民事試煉題庫 (0101-0110)
+                if (typeof questions0101 !== 'undefined') gameState.questions.push(...questions0101);
+                if (typeof questions0102 !== 'undefined') gameState.questions.push(...questions0102);
+                if (typeof questions0103 !== 'undefined') gameState.questions.push(...questions0103);
+                if (typeof questions0104 !== 'undefined') gameState.questions.push(...questions0104);
+                if (typeof questions0105 !== 'undefined') gameState.questions.push(...questions0105);
+                if (typeof questions0106 !== 'undefined') gameState.questions.push(...questions0106);
+                if (typeof questions0107 !== 'undefined') gameState.questions.push(...questions0107);
+                if (typeof questions0108 !== 'undefined') gameState.questions.push(...questions0108);
+                if (typeof questions0109 !== 'undefined') gameState.questions.push(...questions0109);
+                if (typeof questions0110 !== 'undefined') gameState.questions.push(...questions0110);
             }
             
             shuffleArray(gameState.questions);
             console.log(`Loaded ${gameState.questions.length} questions for ${trialType} trial.`);
         }
+        // ▲▲▲ 修改結束 ▲▲▲
         
         function initializeSpecialEvents() {
             if (gameState.specialEvents.length > 0) return; // 避免重複載入
