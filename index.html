@@ -264,7 +264,7 @@
         }
 
         .question-text {
-            font-size: 1.7em; 
+            font-size: 1.5em; 
             margin-bottom: 25px;
             line-height: 1.6;
             color: #fff;
@@ -289,7 +289,7 @@
             padding: 15px 20px;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 1.4em;
+            font-size: 1.2em;
             flex: 1;
             text-align: left;
         }
@@ -348,7 +348,7 @@
             padding: 20px;
             border-radius: 5px;
             display: none;
-            font-size: 1.4em;
+            font-size: 1.1em;
             line-height: 1.7;
         }
 
@@ -636,13 +636,13 @@
                 grid-template-columns: 1fr;
             }
 
-            /* --- ▼▼▼ 音樂播放器手機版樣式 ▼▼▼ --- */
+            /* --- ▼▼▼ 手機版音樂播放器樣式 (已修改為置頂) ▼▼▼ --- */
             #music-player-container {
-                top: auto;
-                right: 10px;
-                bottom: 10px;
-                left: auto;
-                transform: none;
+                top: 10px;            /* 改為：距離頂部 10px */
+                bottom: auto;         /* 新增：取消置底 */
+                left: 50%;            /* 改為：水平置中第一步 */
+                right: auto;          /* 改為：取消靠右 */
+                transform: translateX(-50%); /* 改為：水平置中第二步 */
                 flex-direction: row;
                 background-color: rgba(0,0,0,0.5);
                 padding: 5px;
@@ -858,16 +858,12 @@
 
     <!-- --- ▼▼▼ 音樂播放器 HTML (已修改) ▼▼▼ --- -->
     <div id="music-player-container">
-        <!-- 新增切換按鈕 -->
         <button class="music-btn" id="switch-music-btn">»</button> 
-
-        <!-- 為播放按鈕增加 P1, P2 的 data 屬性 -->
         <button class="music-btn" data-music="music1.mp3" data-music-p1="music1.mp3" data-icon-p1="♪" data-music-p2="music6.mp3" data-icon-p2="♫">♪</button>
         <button class="music-btn" data-music="music2.mp3" data-music-p1="music2.mp3" data-icon-p1="♪" data-music-p2="music7.mp3" data-icon-p2="♫">♪</button>
         <button class="music-btn" data-music="music3.mp3" data-music-p1="music3.mp3" data-icon-p1="♪" data-music-p2="music8.mp3" data-icon-p2="♫">♪</button>
         <button class="music-btn" data-music="music4.mp3" data-music-p1="music4.mp3" data-icon-p1="♪" data-music-p2="music9.mp3" data-icon-p2="♫">♪</button>
         <button class="music-btn" data-music="music5.mp3" data-music-p1="music5.mp3" data-icon-p1="♪" data-music-p2="music10.mp3" data-icon-p2="♫">♪</button>
-        
         <button class="music-btn" id="loop-btn">↻</button>
     </div>
     <audio id="bg-music"></audio>
@@ -1100,9 +1096,9 @@
             const musicPlayer = document.getElementById('bg-music');
             const musicButtons = document.querySelectorAll('.music-btn[data-music]');
             const loopBtn = document.getElementById('loop-btn');
-            const switchBtn = document.getElementById('switch-music-btn'); // 新增：獲取切換按鈕
+            const switchBtn = document.getElementById('switch-music-btn');
 
-            let currentMusicPage = 1; // 新增：追蹤目前音樂頁面
+            let currentMusicPage = 1;
 
             function handleMusicButtonClick(clickedButton) {
                 if (!clickedButton) return;
@@ -1127,7 +1123,6 @@
                 }
             }
             
-            // 新增：切換音樂列表的函式
             function switchMusicPage() {
                 // 1. 停止播放並重設UI
                 musicPlayer.pause();
@@ -1142,11 +1137,11 @@
                 // 3. 更新每個按鈕的資料和圖示
                 musicButtons.forEach(button => {
                     const page = currentMusicPage;
-                    // 使用 [] 動態讀取 data-music-p1 或 data-music-p2
                     button.dataset.music = button.dataset[`musicP${page}`]; 
                     button.textContent = button.dataset[`iconP${page}`];
                 });
-                // 新增：切換後自動播放新列表的第一首歌
+
+                // 4. 新增：切換後自動播放新列表的第一首歌
                 handleMusicButtonClick(musicButtons[0]);
             }
 
@@ -1163,7 +1158,7 @@
                 loopBtn.classList.toggle('active-music', musicPlayer.loop);
             });
             
-            // 新增：為切換按鈕綁定事件
+            // 為切換按鈕綁定事件
             switchBtn.addEventListener('click', switchMusicPage);
 
             // 監聽播放器的狀態變化，同步UI
