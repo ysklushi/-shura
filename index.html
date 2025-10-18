@@ -41,7 +41,6 @@
             letter-spacing: 3px;
         }
         
-        /* --- 新增試煉選擇畫面樣式 --- */
         .trial-selection-screen {
             display: none;
         }
@@ -82,7 +81,6 @@
             color: #aaa;
         }
         
-        /* --- 【修改點 1】新增的圖片樣式 --- */
         .trial-image {
             width: 100%;
             height: 180px;
@@ -103,7 +101,6 @@
             margin-bottom: 10px;
             color: #ffd93d;
         }
-        /* --- 樣式結束 --- */
 
 
         .character-selection, .name-input {
@@ -267,7 +264,7 @@
         }
 
         .question-text {
-            font-size: 1.5em; 
+            font-size: 1.7em; 
             margin-bottom: 25px;
             line-height: 1.6;
             color: #fff;
@@ -292,7 +289,7 @@
             padding: 15px 20px;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 1.2em;
+            font-size: 1.4em;
             flex: 1;
             text-align: left;
         }
@@ -351,7 +348,7 @@
             padding: 20px;
             border-radius: 5px;
             display: none;
-            font-size: 1.1em;
+            font-size: 1.4em;
             line-height: 1.7;
         }
 
@@ -492,7 +489,6 @@
         .end-image img {
             width: 100%;
             height: 100%;
-            /* --- CSS 修改點：改為 contain 以完整顯示圖片 --- */
             object-fit: contain; 
             border-radius: 10px;
         }
@@ -547,8 +543,7 @@
         #special-event-controls {
             text-align: center;
         }
-
-        /* --- 【CSS 新增處】 --- */
+        
         .creator-credit {
             position: fixed;
             bottom: 10px;
@@ -563,7 +558,46 @@
         .creator-credit:hover {
             color: rgba(255, 255, 255, 0.9);
         }
-        /* --- CSS 新增結束 --- */
+
+        /* --- ▼▼▼ 音樂播放器樣式 ▼▼▼ --- */
+        #music-player-container {
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 2000; /* 確保在最上層 */
+        }
+
+        .music-btn {
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent; /* 移除行動裝置點擊高亮 */
+        }
+
+        .music-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+        }
+
+        .music-btn.active-music {
+            color: #ffd93d; /* 微亮黃色 */
+            border-color: #ffd93d;
+            box-shadow: 0 0 10px rgba(255, 217, 61, 0.7);
+        }
+        /* --- ▲▲▲ 樣式結束 ▲▲▲ --- */
 
 
         @media (max-width: 1450px) {
@@ -601,6 +635,26 @@
             .trial-grid {
                 grid-template-columns: 1fr;
             }
+
+            /* --- ▼▼▼ 音樂播放器手機版樣式 ▼▼▼ --- */
+            #music-player-container {
+                top: auto;
+                right: 10px;
+                bottom: 10px;
+                left: auto;
+                transform: none;
+                flex-direction: row;
+                background-color: rgba(0,0,0,0.5);
+                padding: 5px;
+                border-radius: 30px;
+            }
+
+            .music-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+            /* --- ▲▲▲ 手機版樣式結束 ▲▲▲ --- */
         }
     </style>
 </head>
@@ -669,7 +723,6 @@
         <div id="trial-selection-screen" class="trial-selection-screen">
             <h2 class="game-title" style="font-size: 2.5em; margin-bottom: 40px;">選擇你的試煉戰場</h2>
             <div class="trial-grid">
-                <!-- --- 【修改點 2】將原本的 div 替換成 img --- -->
                 <div class="trial-card" data-trial="criminal">
                     <img src="criminallaw.png" alt="刑事試煉插圖" class="trial-image">
                     <h3>刑事試煉</h3>
@@ -680,13 +733,11 @@
                     <h3>民事試煉</h3>
                     <p>金錢、契約、家庭...，民事糾紛的戰場沒有煙硝，卻充滿無形的刀光劍影。用你的智慧理清一切。</p>
                 </div>
-                <!-- ▼▼▼ 修改處 A: 新增勞基法試煉選項 ▼▼▼ -->
                 <div class="trial-card" data-trial="labor">
                     <img src="laborlaw.png" alt="勞基法試煉插圖" class="trial-image">
                     <h3>勞基法試煉</h3>
                     <p>加班、解僱、職業災害...，面對職場中的各種陷阱與挑戰，用勞動法令保護自己與夥伴的權益！</p>
                 </div>
-                <!-- ▲▲▲ 修改結束 ▲▲▲ -->
                 <div class="trial-card disabled">
                      <div class="trial-image-placeholder">（插圖）</div>
                     <h3>尚待建構</h3>
@@ -765,7 +816,6 @@
                     </div>
                 </div>
             </div>
-            <!-- --- HTML 修改點：新增按鈕 --- -->
             <div class="control-buttons">
                 <button class="control-button surrender-btn" onclick="gameOver(false)">投降認輸</button>
                 <button class="control-button escape-btn" onclick="gameOver(false)">中途烙跑</button>
@@ -803,14 +853,27 @@
             </div>
         </div>
     </div>
-
-    <!-- --- 【HTML 新增處】 --- -->
+    
     <a href="https://karolushi.netlify.app/" target="_blank" class="creator-credit">過勞律師製作</a>
-    <!-- --- HTML 新增結束 --- -->
+
+    <!-- --- ▼▼▼ 音樂播放器 HTML (已修改) ▼▼▼ --- -->
+    <div id="music-player-container">
+        <!-- 新增切換按鈕 -->
+        <button class="music-btn" id="switch-music-btn">»</button> 
+
+        <!-- 為播放按鈕增加 P1, P2 的 data 屬性 -->
+        <button class="music-btn" data-music="music1.mp3" data-music-p1="music1.mp3" data-icon-p1="♪" data-music-p2="music6.mp3" data-icon-p2="♫">♪</button>
+        <button class="music-btn" data-music="music2.mp3" data-music-p1="music2.mp3" data-icon-p1="♪" data-music-p2="music7.mp3" data-icon-p2="♫">♪</button>
+        <button class="music-btn" data-music="music3.mp3" data-music-p1="music3.mp3" data-icon-p1="♪" data-music-p2="music8.mp3" data-icon-p2="♫">♪</button>
+        <button class="music-btn" data-music="music4.mp3" data-music-p1="music4.mp3" data-icon-p1="♪" data-music-p2="music9.mp3" data-icon-p2="♫">♪</button>
+        <button class="music-btn" data-music="music5.mp3" data-music-p1="music5.mp3" data-icon-p1="♪" data-music-p2="music10.mp3" data-icon-p2="♫">♪</button>
+        
+        <button class="music-btn" id="loop-btn">↻</button>
+    </div>
+    <audio id="bg-music"></audio>
+    <!-- --- ▲▲▲ HTML 修改結束 ▲▲▲ --- -->
 
     <!-- 載入所有題目 JS 檔案 -->
-    <!-- ▼▼▼ HTML 修改處 1：載入所有需要的 JS 檔案 ▼▼▼ -->
-    <!-- 刑事試煉題庫 -->
     <script src="question0001.js"></script>
     <script src="question0002.js"></script>
     <script src="question0003.js"></script>
@@ -821,7 +884,6 @@
     <script src="question0008.js"></script>
     <script src="question0009.js"></script>
     <script src="question0010.js"></script>
-    <!-- 民事試煉題庫 -->
     <script src="question0101.js"></script>
     <script src="question0102.js"></script>
     <script src="question0103.js"></script>
@@ -832,8 +894,6 @@
     <script src="question0108.js"></script>
     <script src="question0109.js"></script>
     <script src="question0110.js"></script>
-
-    <!-- ▼▼▼ 修改處 B: 載入勞基法試煉題庫 ▼▼▼ -->
     <script src="question0201.js"></script>
     <script src="question0202.js"></script>
     <script src="question0203.js"></script>
@@ -844,9 +904,6 @@
     <script src="question0208.js"></script>
     <script src="question0209.js"></script>
     <script src="question0210.js"></script>
-    <!-- ▲▲▲ 修改結束 ▲▲▲ -->
-    
-    <!-- 載入所有特殊事件 JS 檔案 -->
     <script src="fate001.js"></script>
     <script src="fate002.js"></script>
     <script src="fate003.js"></script>
@@ -857,7 +914,7 @@
             character: '',
             name: '',
             image: '',
-            trialType: '', // 新增：儲存試煉類型
+            trialType: '',
             hp: 300,
             maxHp: 1000,
             currentQuestion: 0,
@@ -879,13 +936,10 @@
             }
         }
 
-        // ▼▼▼ JavaScript 修改處 2：修改函式內的題目分配邏輯 ▼▼▼
         function initializeQuestions(trialType) {
-            gameState.questions = []; // 每次都先清空
+            gameState.questions = [];
             
             if (trialType === 'criminal') {
-                console.log("Loading criminal trial questions...");
-                // 載入刑事試煉題庫 (0001-0010)
                 if (typeof questions0001 !== 'undefined') gameState.questions.push(...questions0001);
                 if (typeof questions0002 !== 'undefined') gameState.questions.push(...questions0002);
                 if (typeof questions0003 !== 'undefined') gameState.questions.push(...questions0003);
@@ -898,8 +952,6 @@
                 if (typeof questions0010 !== 'undefined') gameState.questions.push(...questions0010);
 
             } else if (trialType === 'civil') {
-                console.log("Loading civil trial questions...");
-                // 載入民事試煉題庫 (0101-0110)
                 if (typeof questions0101 !== 'undefined') gameState.questions.push(...questions0101);
                 if (typeof questions0102 !== 'undefined') gameState.questions.push(...questions0102);
                 if (typeof questions0103 !== 'undefined') gameState.questions.push(...questions0103);
@@ -911,10 +963,7 @@
                 if (typeof questions0109 !== 'undefined') gameState.questions.push(...questions0109);
                 if (typeof questions0110 !== 'undefined') gameState.questions.push(...questions0110);
             
-            // ▼▼▼ 修改處 C: 新增讀取勞基法題庫的邏輯 ▼▼▼
             } else if (trialType === 'labor') {
-                console.log("Loading labor law trial questions...");
-                // 載入勞基法試煉題庫 (0201-0210)
                 if (typeof questions0201 !== 'undefined') gameState.questions.push(...questions0201);
                 if (typeof questions0202 !== 'undefined') gameState.questions.push(...questions0202);
                 if (typeof questions0203 !== 'undefined') gameState.questions.push(...questions0203);
@@ -926,15 +975,12 @@
                 if (typeof questions0209 !== 'undefined') gameState.questions.push(...questions0209);
                 if (typeof questions0210 !== 'undefined') gameState.questions.push(...questions0210);
             }
-            // ▲▲▲ 修改結束 ▲▲▲
             
             shuffleArray(gameState.questions);
-            console.log(`Loaded ${gameState.questions.length} questions for ${trialType} trial.`);
         }
-        // ▲▲▲ 修改結束 ▲▲▲
         
         function initializeSpecialEvents() {
-            if (gameState.specialEvents.length > 0) return; // 避免重複載入
+            if (gameState.specialEvents.length > 0) return;
             if (typeof fateEvents001 !== 'undefined') gameState.specialEvents.push(...fateEvents001);
             if (typeof fateEvents002 !== 'undefined') gameState.specialEvents.push(...fateEvents002);
             if (typeof fateEvents003 !== 'undefined') gameState.specialEvents.push(...fateEvents003);
@@ -942,15 +988,12 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            // 移除：不再預先載入所有題目
-            // initializeQuestions();
             initializeSpecialEvents(); 
             
             const allCharacterCards = document.querySelectorAll('.character-card');
             
             allCharacterCards.forEach(card => {
                 card.addEventListener('click', function() {
-                    // 重新綁定事件，避免因 cloneNode 造成事件遺失
                     document.querySelectorAll('.character-card').forEach(c => c.classList.remove('selected'));
                     this.classList.add('selected');
                     gameState.character = this.dataset.character;
@@ -964,7 +1007,7 @@
                 updateStartButton();
             });
 
-            document.getElementById('start-game').addEventListener('click', showTrialSelection); // 修改：點擊後顯示試煉選擇
+            document.getElementById('start-game').addEventListener('click', showTrialSelection);
             document.getElementById('current-date').textContent = new Date().toLocaleDateString('zh-TW');
 
             document.getElementById('next-question-btn').addEventListener('click', () => {
@@ -985,7 +1028,6 @@
                 }
             });
 
-            // 新增：為試煉卡片加上事件監聽
             document.querySelectorAll('.trial-card:not(.disabled)').forEach(card => {
                 card.addEventListener('click', function() {
                     const trialType = this.dataset.trial;
@@ -1011,7 +1053,6 @@
                 slider.insertBefore(cloneLast, cards[0]);
             }
 
-            // 重新選取所有卡片並重新綁定事件
             cards = slider.querySelectorAll('.character-card');
             cards.forEach(card => {
                  card.addEventListener('click', function() {
@@ -1054,6 +1095,99 @@
 
             nextArrow.addEventListener('click', () => shiftSlide(1));
             prevArrow.addEventListener('click', () => shiftSlide(-1));
+
+            // --- ▼▼▼ 全新音樂播放器邏輯 (已修改) ▼▼▼ ---
+            const musicPlayer = document.getElementById('bg-music');
+            const musicButtons = document.querySelectorAll('.music-btn[data-music]');
+            const loopBtn = document.getElementById('loop-btn');
+            const switchBtn = document.getElementById('switch-music-btn'); // 新增：獲取切換按鈕
+
+            let currentMusicPage = 1; // 新增：追蹤目前音樂頁面
+
+            function handleMusicButtonClick(clickedButton) {
+                if (!clickedButton) return;
+
+                const isPlayingThisSong = clickedButton.classList.contains('active-music');
+
+                if (isPlayingThisSong) {
+                    musicPlayer.pause();
+                    clickedButton.classList.remove('active-music');
+                } else {
+                    musicButtons.forEach(btn => btn.classList.remove('active-music'));
+                    clickedButton.classList.add('active-music');
+                    
+                    const musicSrc = clickedButton.dataset.music;
+                    if (!musicPlayer.src.endsWith(musicSrc)) {
+                        musicPlayer.src = musicSrc;
+                    }
+                    
+                    musicPlayer.play().catch(error => {
+                        console.warn("音樂自動播放被瀏覽器阻止，將在用戶互動後開始。", error);
+                    });
+                }
+            }
+            
+            // 新增：切換音樂列表的函式
+            function switchMusicPage() {
+                // 1. 停止播放並重設UI
+                musicPlayer.pause();
+                musicPlayer.src = '';
+                musicButtons.forEach(btn => btn.classList.remove('active-music'));
+                loopBtn.classList.remove('active-music');
+                musicPlayer.loop = false;
+
+                // 2. 切換頁碼
+                currentMusicPage = currentMusicPage === 1 ? 2 : 1;
+                
+                // 3. 更新每個按鈕的資料和圖示
+                musicButtons.forEach(button => {
+                    const page = currentMusicPage;
+                    // 使用 [] 動態讀取 data-music-p1 或 data-music-p2
+                    button.dataset.music = button.dataset[`musicP${page}`]; 
+                    button.textContent = button.dataset[`iconP${page}`];
+                });
+            }
+
+            // 為每個音樂按鈕綁定點擊事件
+            musicButtons.forEach(button => {
+                button.addEventListener('click', () => handleMusicButtonClick(button));
+            });
+
+            // 循環按鈕邏輯
+            loopBtn.addEventListener('click', () => {
+                if (musicPlayer.paused) return;
+                
+                musicPlayer.loop = !musicPlayer.loop;
+                loopBtn.classList.toggle('active-music', musicPlayer.loop);
+            });
+            
+            // 新增：為切換按鈕綁定事件
+            switchBtn.addEventListener('click', switchMusicPage);
+
+            // 監聽播放器的狀態變化，同步UI
+            musicPlayer.addEventListener('play', () => {
+                if (musicPlayer.loop) {
+                    loopBtn.classList.add('active-music');
+                }
+            });
+            
+            musicPlayer.addEventListener('pause', () => {
+                loopBtn.classList.remove('active-music');
+            });
+            
+            musicPlayer.addEventListener('ended', () => {
+                if (!musicPlayer.loop) {
+                    musicButtons.forEach(btn => {
+                        if (musicPlayer.src.endsWith(btn.dataset.music)) {
+                            btn.classList.remove('active-music');
+                        }
+                    });
+                }
+            });
+
+            window.playDefaultMusic = () => handleMusicButtonClick(musicButtons[0]);
+            // --- ▲▲▲ 邏輯修改結束 ▲▲▲ ---
+
         });
 
         function updateStartButton() {
@@ -1065,16 +1199,18 @@
             }
         }
         
-        // 新增：顯示試煉選擇畫面
         function showTrialSelection() {
             document.getElementById('main-menu').style.display = 'none';
             document.getElementById('trial-selection-screen').style.display = 'block';
+
+            if (typeof window.playDefaultMusic === 'function') {
+                window.playDefaultMusic();
+            }
         }
 
-        // 修改：此函數現在是真正開始遊戲的核心
         function startTrial(trialType) {
             gameState.trialType = trialType;
-            initializeQuestions(trialType); // 根據選擇載入題目
+            initializeQuestions(trialType);
 
             document.getElementById('player-character').textContent = gameState.character;
             document.getElementById('player-name').textContent = gameState.name;
@@ -1087,12 +1223,10 @@
             img.alt = gameState.character;
             characterImageDiv.appendChild(img);
 
-            // 重置遊戲狀態
             gameState.startTime = new Date();
             gameState.currentQuestion = 0;
 
-            // --- 【程式修改處】根據角色設定不同的初始 HP ---
-            let initialHp = 300; // 預設值
+            let initialHp = 300;
             const characterRole = gameState.character;
             if (characterRole.includes('律師')) {
                 initialHp = 300;
@@ -1104,7 +1238,6 @@
                 initialHp = 900;
             }
             gameState.hp = initialHp;
-            // --- 修改結束 ---
             
             gameState.correctCount = 0;
             gameState.wrongCount = 0;
@@ -1343,13 +1476,10 @@
             }
         }
 
-        // --- JavaScript 新增點 1：新增預覽通關畫面的函數 ---
         function previewVictory() {
-            // 呼叫 gameOver 函數，設定為勝利，並傳入指定的通關圖片
             gameOver(true, 'passall.jpeg');
         }
 
-        // --- JavaScript 修改點：修改 gameOver 函數以接受自訂圖片 ---
         function gameOver(isWin, customImage = null) {
             clearInterval(gameState.timer);
             
@@ -1362,15 +1492,15 @@
             if (isWin) {
                 endTitle.textContent = '你已成為最高修羅場之王';
                 endTitle.className = 'end-title win-title';
-                const winImageSrc = customImage || 'win.png'; // 如果有傳入自訂圖片則使用，否則用預設的
+                const winImageSrc = customImage || 'win.png';
                 endImage.innerHTML = `<img src="${winImageSrc}" alt="通關插圖" />`;
             } else {
                 endTitle.textContent = '你已成為修羅場中的一堆白骨';
                 endTitle.className = 'end-title lose-title';
                 
-                let loseImageSrc = 'lose.png'; // 預設失敗圖片
+                let loseImageSrc = 'lose.png';
                 if (gameState.image === 'role7.png') {
-                    loseImageSrc = 'lose2.png'; // 司法黃牛的專屬失敗圖片
+                    loseImageSrc = 'lose2.png';
                 }
                 endImage.innerHTML = `<img src="${loseImageSrc}" alt="落敗插圖" />`;
             }
