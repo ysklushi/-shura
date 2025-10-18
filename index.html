@@ -619,13 +619,14 @@
             .trial-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
-            /* ▼▼▼ 在這裡加上新的樣式 ▼▼▼ */
+            
+            /* ▼▼▼ 新增：手機版遊戲中人物圖片尺寸調整 ▼▼▼ */
             .character-image {
                 width: 280px;
                 height: auto;
                 margin: 0 auto;
             }
-            /* ▲▲▲ 樣式新增結束 ▲▲▲ */
+            /* ▲▲▲ 調整結束 ▲▲▲ */
         }
         
         @media (max-width: 768px) {
@@ -643,13 +644,13 @@
                 grid-template-columns: 1fr;
             }
 
-            /* --- ▼▼▼ 手機版音樂播放器樣式 (已修改為置頂) ▼▼▼ --- */
+            /* --- 手機版音樂播放器樣式 (已修改為置頂) --- */
             #music-player-container {
-                top: 10px;            /* 改為：距離頂部 10px */
-                bottom: auto;         /* 新增：取消置底 */
-                left: 50%;            /* 改為：水平置中第一步 */
-                right: auto;          /* 改為：取消靠右 */
-                transform: translateX(-50%); /* 改為：水平置中第二步 */
+                top: 10px;
+                bottom: auto;
+                left: 50%;
+                right: auto;
+                transform: translateX(-50%);
                 flex-direction: row;
                 background-color: rgba(0,0,0,0.5);
                 padding: 5px;
@@ -661,7 +662,34 @@
                 height: 35px;
                 font-size: 18px;
             }
-            /* --- ▲▲▲ 手機版樣式結束 ▲▲▲ --- */
+            
+            /* ▼▼▼ 新增：手機版角色選擇器尺寸調整 ▼▼▼ */
+            .character-viewport {
+                width: 280px;
+            }
+
+            .character-card {
+                width: 280px;
+            }
+            
+            .character-image-main {
+                width: 240px;
+                height: auto;
+            }
+
+            .slider-arrow {
+                width: 40px;
+                height: 40px;
+            }
+
+            .prev-arrow {
+                left: 0px;
+            }
+
+            .next-arrow {
+                right: 0px;
+            }
+            /* ▲▲▲ 調整結束 ▲▲▲ */
         }
     </style>
 </head>
