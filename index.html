@@ -1146,6 +1146,8 @@
                     button.dataset.music = button.dataset[`musicP${page}`]; 
                     button.textContent = button.dataset[`iconP${page}`];
                 });
+                // 新增：切換後自動播放新列表的第一首歌
+                handleMusicButtonClick(musicButtons[0]);
             }
 
             // 為每個音樂按鈕綁定點擊事件
